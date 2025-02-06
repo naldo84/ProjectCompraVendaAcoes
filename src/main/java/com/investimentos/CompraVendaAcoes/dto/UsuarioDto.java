@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CPF;
 
-@Entity
 public record UsuarioDto(
         @NotNull(message = "O CPF é obrigatório!")
         @CPF
