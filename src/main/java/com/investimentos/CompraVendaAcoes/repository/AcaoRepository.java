@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface AcaoRepository extends JpaRepository<AcaoModel, UUID> {
+public interface AcaoRepository extends JpaRepository<AcaoModel, Long> {
+
+    AcaoModel findByticker(String ticker);
 
 }

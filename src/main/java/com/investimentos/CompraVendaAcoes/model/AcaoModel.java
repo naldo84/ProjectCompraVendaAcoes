@@ -10,62 +10,52 @@ import java.util.UUID;
 @Table(name = "tb_acao")
 public class AcaoModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @NotNull
-    @Size(min = 5, max = 6)
     private String ticker;
-
-    @NotNull
-    @Size(min = 1, max = 100)
-    private String nome;
-
-    @NotNull
-    @Size(min = 3, max = 15)
+    private String nomeEmpresa;
     private String setor;
+    private double precoAtual;
 
-    @NotNull
-    private double preco;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public @NotNull @Size(min = 5, max = 6) String getTicker() {
+    public String getTicker() {
         return ticker;
     }
 
-    public void setTicker(@NotNull @Size(min = 5, max = 6) String ticker) {
+    public void setTicker(String ticker) {
         this.ticker = ticker;
     }
 
-    public @NotNull @Size(min = 1, max = 100) String getNome() {
-        return nome;
+    public String getNomeEmpresa() {
+        return nomeEmpresa;
     }
 
-    public void setNome(@NotNull @Size(min = 1, max = 100) String nome) {
-        this.nome = nome;
+    public void setNomeEmpresa(String nomeEmpresa) {
+        this.nomeEmpresa = nomeEmpresa;
     }
 
-    public @NotNull @Size(min = 3, max = 15) String getSetor() {
+    public String getSetor() {
         return setor;
     }
 
-    public void setSetor(@NotNull @Size(min = 3, max = 15) String setor) {
+    public void setSetor(String setor) {
         this.setor = setor;
     }
 
-    @NotNull
-    public double getPreco() {
-        return preco;
+    public double getPrecoAtual() {
+        return precoAtual;
     }
 
-    public void setPreco(@NotNull double preco) {
-        this.preco = preco;
+    public void setPrecoAtual(double precoAtual) {
+        this.precoAtual = precoAtual;
     }
 }
