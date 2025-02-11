@@ -1,9 +1,6 @@
 package com.investimentos.CompraVendaAcoes.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.br.CPF;
 
 @Entity
 @Table(name = "tb_usuario")

@@ -1,9 +1,6 @@
 package com.investimentos.CompraVendaAcoes.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 public record UsuarioDto(
@@ -17,7 +14,8 @@ public record UsuarioDto(
         String nome,
 
         @NotNull(message = "A idade é obrigatória!")
-        @Size(min = 18, max = 100, message = "A idade mínima é 18 e a máxima 100.")
+        @Min(18)
+        @Max(120)
         int idade,
 
         @NotNull(message = "O e-mail é obrigatório!")
