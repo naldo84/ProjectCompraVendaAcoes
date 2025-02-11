@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+
 public record AcaoDto(
         @NotNull(message = "O ticker é obrigatório!")
         @Size(min = 5, max = 6)
@@ -13,6 +14,9 @@ public record AcaoDto(
         @NotNull(message = "O nome da empresa é obrigatório!")
         @Size(min = 3, max = 50, message = "O nome da empresa deve conter no mínimo 3 e no máximo 50 caracteres.")
         String nomeEmpresa,
+
+        @NotNull(message = "O tipo da ação é obrigatório!")
+        String tipoAcao,
 
         @NotNull(message = "O setor da empresa é obrigatório!")
         @Size(min = 3, max = 25, message = "O setor da empresa deve conter no mínimo 3 e no máximo 25 caracteres.")

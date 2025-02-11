@@ -1,10 +1,7 @@
 package com.investimentos.CompraVendaAcoes.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
-import java.util.UUID;
 
 @Entity
 @Table(name = "tb_acao")
@@ -15,6 +12,7 @@ public class AcaoModel {
 
     private String ticker;
     private String nomeEmpresa;
+    private String tipoAcao;
     private String setor;
     private double precoAtual;
 
@@ -41,6 +39,14 @@ public class AcaoModel {
 
     public void setNomeEmpresa(String nomeEmpresa) {
         this.nomeEmpresa = nomeEmpresa;
+    }
+
+    public String getTipoAcao() {
+        return tipoAcao;
+    }
+
+    public void setTipoAcao(String tipoAcao) {
+        this.tipoAcao = tipoAcao;
     }
 
     public String getSetor() {
