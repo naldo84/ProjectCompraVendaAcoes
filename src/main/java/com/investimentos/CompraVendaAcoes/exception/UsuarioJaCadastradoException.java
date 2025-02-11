@@ -7,8 +7,3 @@ public class UsuarioJaCadastradoException extends RuntimeException{
 
 }
 
-//public class AcaoJaCadastradaException extends RuntimeException{
-//    public AcaoJaCadastradaException(String message) {
-//        super(message);
-//    }
-//}

@@ -49,14 +49,6 @@ public class AcaoService {
 
     public AcaoModel alterarAcaoByTicker(String ticker, AcaoDto acaoDto) {
         Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker);
-        //        AcaoModel acaoModel = acaoEncontrada.get();
-//
-//        AcaoModel acaoAlterada = acaoUtilService.converterDtoParaModel(acaoDto);
-//
-//        BeanUtils.copyProperties(acaoAlterada, acaoModel);
-//
-//        return acaoRepository.save(acaoAlterada);
-
 
         var acaoModel = acaoEncontrada.get();
         acaoUtilService.converterDtoParaModel(acaoDto, acaoModel);
