@@ -12,10 +12,19 @@ public class AcaoModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 6)
     private String ticker;
+
+    @Column(nullable = false, length = 50)
     private String nomeEmpresa;
+
+    @Column(nullable = false, length = 20)
     private String tipoAcao;
+
+    @Column(nullable = false, length = 25)
     private String setor;
+
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precoAtual;
 
 
