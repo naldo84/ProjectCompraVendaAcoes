@@ -5,6 +5,7 @@ import com.investimentos.CompraVendaAcoes.model.AcaoModel;
 import com.investimentos.CompraVendaAcoes.service.AcaoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,16 +51,15 @@ public class AcaoController {
 
     @DeleteMapping("/{ticker}")
     public ResponseEntity<Object> excluirAcaoByTicker(@PathVariable(value = "ticker") String ticker){
-        AcaoModel acaoEncontrada = acaoService.consultarAcaoByTicker(ticker);
-        acaoService.excluirAcaoByTicker((acaoEncontrada.getTicker().toUpperCase()));
-        return ResponseEntity.ok().body("Acão " + acaoEncontrada.getTicker() + " excluída!");
+        acaoService.excluirAcaoByTicker((ticker.toUpperCase()));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Acão " + ticker + " excluída!");
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Object> excluirTodasAcoes(){
         acaoService.excluirTodasAsAcoes();
 
-        return ResponseEntity.accepted().body("As ações foram excluídas!");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("As ações foram excluídas!");
 
     }
 }

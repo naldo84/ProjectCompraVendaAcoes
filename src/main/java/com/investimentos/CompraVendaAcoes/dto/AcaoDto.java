@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+
 
 public record AcaoDto(
         @NotNull(message = "O ticker é obrigatório!")
@@ -24,7 +26,7 @@ public record AcaoDto(
 
         @NotNull(message = "Informar o preço atual da ação é obrigatório!")
         @Positive(message = "O preço da ação deve ser positivo!")
-        @Digits(integer = 4, fraction = 2)
-        double precoAtual) {
+        @Digits(integer = 10, fraction = 2)
+        BigDecimal precoAtual) {
 
 }

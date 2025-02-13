@@ -1,15 +1,15 @@
 package com.investimentos.CompraVendaAcoes.service;
 
 import com.investimentos.CompraVendaAcoes.dto.AcaoDto;
-import com.investimentos.CompraVendaAcoes.exception.AcaoJaCadastradaException;
+import com.investimentos.CompraVendaAcoes.exception.acao.AcaoJaCadastradaException;
+import com.investimentos.CompraVendaAcoes.exception.acao.AcaoNaoEncontradaException;
 import com.investimentos.CompraVendaAcoes.model.AcaoModel;
 import com.investimentos.CompraVendaAcoes.repository.AcaoRepository;
+import com.investimentos.CompraVendaAcoes.service.util.AcaoUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +32,17 @@ public class AcaoService {
 
         AcaoModel acaoModel = acaoUtilService.converterDtoParaModel(acaoDto, acaoModel2);
 
+        acaoModel.setTicker(acaoModel.getTicker().toUpperCase());
+
         return acaoRepository.save(acaoModel);
     }
 
     public List<AcaoModel> consultarAcoes(){
-        List<AcaoModel> listaDeAcoes = acaoRepository.findAll();
-
-        return listaDeAcoes.isEmpty() ? Collections.emptyList() : listaDeAcoes;
+        return acaoRepository.findAll();
     }
 
     public AcaoModel consultarAcaoByTicker(String ticker){
-        Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker);
+        Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
 
         return acaoEncontrada.get();
     }
@@ -58,20 +58,14 @@ public class AcaoService {
     }
 
     public void excluirAcaoByTicker(String ticker) {
-        Optional<AcaoModel> consultarAcao = acaoRepository.findByticker(ticker);
+        Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
 
-        if (consultarAcao.isEmpty()) {
-            throw new DataIntegrityViolationException("Ação não localizada!");
-        }
-
-        acaoRepository.delete(consultarAcao.get());
+        acaoRepository.delete(acaoEncontrada.get());
     }
 
     public void excluirTodasAsAcoes(){
-        List<AcaoModel> listaDeAcoes = acaoRepository.findAll();
-
-        if (listaDeAcoes.isEmpty()){
-            throw new DataIntegrityViolationException("Não há ações para excluir!");
+        if (acaoRepository.count() == 0){
+            throw new AcaoNaoEncontradaException("Não há ações para excluir!");
         }
 
         acaoRepository.deleteAll();

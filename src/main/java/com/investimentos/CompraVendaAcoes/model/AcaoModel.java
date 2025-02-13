@@ -2,6 +2,8 @@ package com.investimentos.CompraVendaAcoes.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "tb_acao")
@@ -14,7 +16,7 @@ public class AcaoModel {
     private String nomeEmpresa;
     private String tipoAcao;
     private String setor;
-    private double precoAtual;
+    private BigDecimal precoAtual;
 
 
     public Long getId() {
@@ -57,11 +59,11 @@ public class AcaoModel {
         this.setor = setor;
     }
 
-    public double getPrecoAtual() {
+    public BigDecimal getPrecoAtual() {
         return precoAtual;
     }
 
-    public void setPrecoAtual(double precoAtual) {
+    public void setPrecoAtual(BigDecimal precoAtual) {
         this.precoAtual = precoAtual;
     }
 }

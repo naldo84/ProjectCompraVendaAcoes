@@ -1,17 +1,16 @@
 package com.investimentos.CompraVendaAcoes.service;
 
 import com.investimentos.CompraVendaAcoes.dto.UsuarioDto;
-import com.investimentos.CompraVendaAcoes.exception.UsuarioJaCadastradoException;
-import com.investimentos.CompraVendaAcoes.exception.UsuarioNaoEncontrado;
+import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioJaCadastradoException;
+import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontrado;
 import com.investimentos.CompraVendaAcoes.model.UsuarioModel;
 import com.investimentos.CompraVendaAcoes.repository.UsuarioRepository;
+import com.investimentos.CompraVendaAcoes.service.util.UsuarioUtilService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -19,10 +18,13 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+    @Autowired
+    UsuarioUtilService usuarioUtilService;
+
     public UsuarioModel cadastrarUsuario(UsuarioDto usuarioDto){
         usuarioRepository.findByCpf(usuarioDto.cpf())
                 .ifPresent(usuario -> {
-                            throw new UsuarioJaCadastradoException("Usuário já cadastrado!!");
+                    throw new UsuarioJaCadastradoException("Usuário já cadastrado!!");
                 });
 
         var usuarioModel = new UsuarioModel();
@@ -32,39 +34,27 @@ public class UsuarioService {
     }
 
     public List<UsuarioModel> consultarUsuarios(){
-        List<UsuarioModel> listaDeUsuarios = usuarioRepository.findAll();
-
-        return listaDeUsuarios.isEmpty() ? Collections.emptyList() : listaDeUsuarios;
+        return usuarioRepository.findAll();
     }
 
     public UsuarioModel alterarUsuario(String cpf, UsuarioDto usuarioDto) {
-        Optional<UsuarioModel> usuarioEncontrado = usuarioRepository.findByCpf(cpf);
+        UsuarioModel usuarioEncontrado = usuarioUtilService.pesquisarSeUsuarioExiste(cpf);
 
-        if (usuarioEncontrado.isEmpty()){
-            throw new UsuarioNaoEncontrado("Usuário não localizado");
-        }
+        BeanUtils.copyProperties(usuarioDto, usuarioEncontrado);
+        usuarioRepository.save(usuarioEncontrado);
 
-        UsuarioModel usuarioModel = usuarioEncontrado.get();
-        BeanUtils.copyProperties(usuarioDto, usuarioModel);
-        usuarioRepository.save(usuarioModel);
-
-        return usuarioModel;
+        return usuarioEncontrado;
     }
 
     public void excluirUsuarioByCpf(String cpf){
-        Optional<UsuarioModel> usuarioEncontrado = usuarioRepository.findByCpf(cpf);
+        UsuarioModel usuarioEncontrado = usuarioUtilService.pesquisarSeUsuarioExiste(cpf);
 
-        if (usuarioEncontrado.isEmpty()) {
-            throw new UsuarioNaoEncontrado("Usuário não localizado");
-
-        }
-
-        usuarioRepository.delete(usuarioEncontrado.get());
+        usuarioRepository.delete(usuarioEncontrado);
     }
 
     public void excluirTodosOsUsuarios(){
         if (usuarioRepository.count() == 0){
-            throw new UsuarioNaoEncontrado("Não há usuários na lista!");
+            throw new UsuarioNaoEncontrado("Não há usuários para excluir!");
         }
 
         usuarioRepository.deleteAll();

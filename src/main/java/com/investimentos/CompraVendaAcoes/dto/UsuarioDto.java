@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.br.CPF;
 public record UsuarioDto(
         @NotNull(message = "O CPF é obrigatório!")
         @CPF
-        @Size(min = 11, max = 11, message = "O CPF deve conter 11 número.s")
+        @Size(min = 11, max = 11, message = "O CPF deve conter 11 números")
         String cpf,
 
         @NotNull(message = "O nome do usuário é obrigatório!")
@@ -20,10 +20,5 @@ public record UsuarioDto(
 
         @NotNull(message = "O e-mail é obrigatório!")
         @Email(message = "E-mail inválido!")
-        String email
-
-) {
-
+        String email) {
 }
-
-

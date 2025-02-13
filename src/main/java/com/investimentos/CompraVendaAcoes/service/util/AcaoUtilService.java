@@ -1,20 +1,20 @@
-package com.investimentos.CompraVendaAcoes.service;
+package com.investimentos.CompraVendaAcoes.service.util;
 
 import com.investimentos.CompraVendaAcoes.dto.AcaoDto;
-import com.investimentos.CompraVendaAcoes.exception.AcaoNaoEncontradaException;
+import com.investimentos.CompraVendaAcoes.exception.acao.AcaoNaoEncontradaException;
 import com.investimentos.CompraVendaAcoes.model.AcaoModel;
 import com.investimentos.CompraVendaAcoes.repository.AcaoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Service
+@Component
 public class AcaoUtilService {
 
     @Autowired
-    AcaoRepository acaoRepository;
+     AcaoRepository acaoRepository;
 
     public Optional<AcaoModel> pesquisarSeAcaoExiste(String ticker) {
         Optional<AcaoModel> acaoEncontrada = acaoRepository.findByticker(ticker);

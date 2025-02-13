@@ -50,13 +50,13 @@ public class UsuarioController {
 
         usuarioService.excluirUsuarioByCpf(cpf);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Usuário " + cpf + " excluído!");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuário " + cpf + " excluído!");
     }
 
-    @DeleteMapping("/todos")
+    @DeleteMapping("/delete")
     public ResponseEntity<Object> excluirTodosOsUsuarios(){
         usuarioService.excluirTodosOsUsuarios();
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Usuários excluídos!");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Os usuário foram excluídos!");
     }
 }
