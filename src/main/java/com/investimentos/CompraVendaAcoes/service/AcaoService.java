@@ -9,9 +9,8 @@ import com.investimentos.CompraVendaAcoes.service.util.AcaoUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class AcaoService {
@@ -42,15 +41,15 @@ public class AcaoService {
     }
 
     public AcaoModel consultarAcaoByTicker(String ticker){
-        Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
+        AcaoModel acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
 
-        return acaoEncontrada.get();
+        return acaoEncontrada;
     }
 
     public AcaoModel alterarAcaoByTicker(String ticker, AcaoDto acaoDto) {
-        Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker);
+        AcaoModel acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker);
 
-        var acaoModel = acaoEncontrada.get();
+        var acaoModel = acaoEncontrada;
         acaoUtilService.converterDtoParaModel(acaoDto, acaoModel);
         acaoRepository.save(acaoModel);
 
@@ -58,9 +57,9 @@ public class AcaoService {
     }
 
     public void excluirAcaoByTicker(String ticker) {
-        Optional<AcaoModel> acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
+        AcaoModel acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
 
-        acaoRepository.delete(acaoEncontrada.get());
+        acaoRepository.delete(acaoEncontrada);
     }
 
     public void excluirTodasAsAcoes(){

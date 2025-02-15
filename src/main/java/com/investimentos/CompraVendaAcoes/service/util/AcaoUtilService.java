@@ -16,13 +16,14 @@ public class AcaoUtilService {
     @Autowired
      AcaoRepository acaoRepository;
 
-    public Optional<AcaoModel> pesquisarSeAcaoExiste(String ticker) {
+    public AcaoModel pesquisarSeAcaoExiste(String ticker) {
         Optional<AcaoModel> acaoEncontrada = acaoRepository.findByticker(ticker);
+
         if (acaoEncontrada.isEmpty()){
             throw new AcaoNaoEncontradaException("A ação " + ticker.toUpperCase() + " não foi localizada!");
         }
 
-        return acaoEncontrada;
+        return acaoEncontrada.get();
     }
 
     public AcaoModel converterDtoParaModel (AcaoDto acaoDto, AcaoModel acaoModel){
