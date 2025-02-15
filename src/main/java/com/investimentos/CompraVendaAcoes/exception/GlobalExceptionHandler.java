@@ -2,6 +2,8 @@ package com.investimentos.CompraVendaAcoes.exception;
 
 import com.investimentos.CompraVendaAcoes.exception.acao.AcaoJaCadastradaException;
 import com.investimentos.CompraVendaAcoes.exception.acao.AcaoNaoEncontradaException;
+import com.investimentos.CompraVendaAcoes.exception.transacao.TransacaoSaldoMenorException;
+import com.investimentos.CompraVendaAcoes.exception.transacao.TransacaoZeradaException;
 import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioJaCadastradoException;
 import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontrado;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    //TRATAMENTO DOS ERRO DE VALIDAÇÕES
+    //TRATAMENTO DOS ERROS DE VALIDAÇÕES
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
@@ -66,6 +68,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsuarioNaoEncontrado.class)
     @ResponseBody
     public ResponseEntity<Object> handleUsuarioNaoEncontradaException(UsuarioNaoEncontrado ex){
+        Error error = new Error(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    //EXCEPTIONS DAS TRANSACOES
+    @ExceptionHandler(TransacaoSaldoMenorException.class)
+    @ResponseBody
+    public ResponseEntity<Object> handlerTransacaoSaldoMenorException(TransacaoSaldoMenorException ex) {
+        Error error = new Error(HttpStatus.BAD_REQUEST, ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TransacaoZeradaException.class)
+    @ResponseBody
+    public ResponseEntity<Object> handlerTransacaoZeradaException(TransacaoZeradaException ex){
         Error error = new Error(HttpStatus.NOT_FOUND, ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);

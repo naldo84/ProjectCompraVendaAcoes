@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tb_transacao")
-public class TranscaoModel {
+public class TransacaoModel {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -31,6 +31,9 @@ public class TranscaoModel {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precoUnitario;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorTotal;
 
     @Column(nullable = false)
     private LocalDateTime dataOperacao;
@@ -89,5 +92,13 @@ public class TranscaoModel {
 
     public void setDataOperacao(LocalDateTime dataOperacao) {
         this.dataOperacao = dataOperacao;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
     }
 }
