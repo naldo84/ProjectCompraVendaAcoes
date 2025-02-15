@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 public class AcaoService {
 
@@ -22,15 +21,12 @@ public class AcaoService {
     AcaoUtilService acaoUtilService;
 
     public AcaoModel cadastrarAcao(AcaoDto acaoDto){
-        acaoRepository.findByticker(acaoDto.ticker())
-                .ifPresent(acao -> {
-                    throw new AcaoJaCadastradaException("Ação já cadastrada no sistema");
+        acaoRepository.findByTicker(acaoDto.ticker())
+                .ifPresent(acao -> { throw new AcaoJaCadastradaException("Ação já cadastrada no sistema");
                 });
 
         var acaoModel2 = new AcaoModel();
-
         AcaoModel acaoModel = acaoUtilService.converterDtoParaModel(acaoDto, acaoModel2);
-
         acaoModel.setTicker(acaoModel.getTicker().toUpperCase());
 
         return acaoRepository.save(acaoModel);
@@ -47,7 +43,7 @@ public class AcaoService {
     }
 
     public AcaoModel alterarAcaoByTicker(String ticker, AcaoDto acaoDto) {
-        AcaoModel acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker);
+        AcaoModel acaoEncontrada = acaoUtilService.pesquisarSeAcaoExiste(ticker.toUpperCase());
 
         var acaoModel = acaoEncontrada;
         acaoUtilService.converterDtoParaModel(acaoDto, acaoModel);

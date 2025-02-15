@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface AcaoRepository extends JpaRepository<AcaoModel, Long> {
 
-    Optional<AcaoModel> findByticker(String ticker);
+    Optional<AcaoModel> findByTicker(String ticker);
 
 }

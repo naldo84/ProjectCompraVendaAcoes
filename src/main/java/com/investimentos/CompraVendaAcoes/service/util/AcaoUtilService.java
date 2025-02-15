@@ -17,7 +17,7 @@ public class AcaoUtilService {
      AcaoRepository acaoRepository;
 
     public AcaoModel pesquisarSeAcaoExiste(String ticker) {
-        Optional<AcaoModel> acaoEncontrada = acaoRepository.findByticker(ticker);
+        Optional<AcaoModel> acaoEncontrada = acaoRepository.findByTicker(ticker);
 
         if (acaoEncontrada.isEmpty()){
             throw new AcaoNaoEncontradaException("A ação " + ticker.toUpperCase() + " não foi localizada!");
