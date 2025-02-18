@@ -2,7 +2,7 @@ package com.investimentos.CompraVendaAcoes.service;
 
 import com.investimentos.CompraVendaAcoes.dto.UsuarioDto;
 import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioJaCadastradoException;
-import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontrado;
+import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontradoException;
 import com.investimentos.CompraVendaAcoes.model.UsuarioModel;
 import com.investimentos.CompraVendaAcoes.repository.UsuarioRepository;
 import com.investimentos.CompraVendaAcoes.service.util.UsuarioUtilService;
@@ -54,7 +54,7 @@ public class UsuarioService {
 
     public void excluirTodosOsUsuarios(){
         if (usuarioRepository.count() == 0){
-            throw new UsuarioNaoEncontrado("Não há usuários para excluir!");
+            throw new UsuarioNaoEncontradoException("Não há usuários para excluir!");
         }
 
         usuarioRepository.deleteAll();

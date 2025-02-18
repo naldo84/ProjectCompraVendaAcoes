@@ -1,6 +1,6 @@
 package com.investimentos.CompraVendaAcoes.service.util;
 
-import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontrado;
+import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontradoException;
 import com.investimentos.CompraVendaAcoes.model.UsuarioModel;
 import com.investimentos.CompraVendaAcoes.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class UsuarioUtilService {
         Optional<UsuarioModel> usuario = usuarioRepository.findByCpf(cpf);
 
         if (usuario.isEmpty()){
-            throw new UsuarioNaoEncontrado("Usuário não localizado!");
+            throw new UsuarioNaoEncontradoException("Usuário não localizado!");
         }
 
         return usuario.get();

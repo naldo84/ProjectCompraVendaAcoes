@@ -5,7 +5,7 @@ import com.investimentos.CompraVendaAcoes.exception.acao.AcaoNaoEncontradaExcept
 import com.investimentos.CompraVendaAcoes.exception.transacao.TransacaoSaldoMenorException;
 import com.investimentos.CompraVendaAcoes.exception.transacao.TransacaoZeradaException;
 import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioJaCadastradoException;
-import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontrado;
+import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -65,9 +65,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(UsuarioNaoEncontrado.class)
+    @ExceptionHandler(UsuarioNaoEncontradoException.class)
     @ResponseBody
-    public ResponseEntity<Object> handleUsuarioNaoEncontradaException(UsuarioNaoEncontrado ex){
+    public ResponseEntity<Object> handleUsuarioNaoEncontradaException(UsuarioNaoEncontradoException ex){
         Error error = new Error(HttpStatus.NOT_FOUND, ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
