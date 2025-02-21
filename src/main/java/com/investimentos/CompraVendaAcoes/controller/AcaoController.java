@@ -51,8 +51,9 @@ public class AcaoController {
 
     @DeleteMapping("/{ticker}")
     public ResponseEntity<Object> excluirAcaoByTicker(@PathVariable(value = "ticker") String ticker){
-        acaoService.excluirAcaoByTicker((ticker.toUpperCase()));
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Acão " + ticker + " excluída!");
+        ticker = ticker.toUpperCase();
+        acaoService.excluirAcaoByTicker((ticker));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Ação " + ticker + " excluída!");
     }
 
     @DeleteMapping("/delete")

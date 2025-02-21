@@ -33,7 +33,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AcaoJaCadastradaException.class)
     @ResponseBody
     public ResponseEntity<Object> handleAcaoJaCAdastradaException(AcaoJaCadastradaException ex){
-        //Error error 1= new java.lang.Error(HttpStatus.CONFLICT, ex.getMessage());
        Error error = new Error(HttpStatus.CONFLICT, ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
 
@@ -89,7 +88,4 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-
-
-
 }
