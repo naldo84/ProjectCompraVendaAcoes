@@ -15,7 +15,7 @@ public record TransacaoResponseDto(
         int quantidade,
         BigDecimal precoUnitario,
         BigDecimal valorTotal,
-        LocalDateTime dataOeracao
+        LocalDateTime dataOperacao
 ) {
     public static TransacaoResponseDto fromModel(TransacaoModel transacao){
         return new TransacaoResponseDto(
