@@ -6,6 +6,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.investimentos.CompraVendaAcoes.dto.TransacaoDto;
 import com.investimentos.CompraVendaAcoes.dto.TransacaoResponseDto;
 import com.investimentos.CompraVendaAcoes.enums.TipoTransacao;
+import com.investimentos.CompraVendaAcoes.exception.Error;
+import com.investimentos.CompraVendaAcoes.exception.GlobalExceptionHandler;
+import com.investimentos.CompraVendaAcoes.exception.transacao.TransacaoSaldoMenorException;
+import com.investimentos.CompraVendaAcoes.exception.transacao.TransacaoZeradaException;
 import com.investimentos.CompraVendaAcoes.model.AcaoModel;
 import com.investimentos.CompraVendaAcoes.model.TransacaoModel;
 import com.investimentos.CompraVendaAcoes.model.UsuarioModel;
@@ -18,17 +22,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -61,13 +64,13 @@ class TransacaoControllerTest {
     void setUp(){
         mockMvc = MockMvcBuilders
                 .standaloneSetup(transacaoController)
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
 
         //objectMapper = new ObjectMapper();
 
         //configuração do object mapper para suportar LocalDateTimee
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        //objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         transacaoDtoCompra = new TransacaoDto(
                 "00690022077",
@@ -172,6 +175,23 @@ class TransacaoControllerTest {
     }
 
     @Test
+    @DisplayName("Deve lançar exceção quando não possuir ações para venda")
+    void deveLancarExcecaoQuandoNaoHouverAcoesParaVenda() throws Exception {
+        doThrow(new TransacaoSaldoMenorException("O usuário não possui ações suficientes para vender!"))
+                .when(transacaoService).realizarVenda(transacaoDtoVenda);
+
+        Error errorEsperado = new Error(HttpStatus.BAD_REQUEST, "O usuário não possui ações suficientes para vender!");
+
+        mockMvc.perform(delete("/transacoes/vender")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transacaoDtoVenda)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(errorEsperado)));
+
+        verify(transacaoService, times(1)).realizarVenda(transacaoDtoVenda);
+    }
+
+    @Test
     @DisplayName("Deve consultar todas as compras de um CPF")
     void deveConsultarComprasDeUmCPF() throws Exception {
         when(transacaoService.consultarCompras("00690022077"))
@@ -181,6 +201,8 @@ class TransacaoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(transacaoResponseDtoCompra)));
+
+        verify(transacaoService, times(1)).consultarCompras("00690022077");
     }
 
     @Test
@@ -193,5 +215,7 @@ class TransacaoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(transacaoResponseDtoVenda)));
+
+        verify(transacaoService, times(1)).consultarVendas("00690022077");
     }
 }

@@ -3,6 +3,9 @@ package com.investimentos.CompraVendaAcoes.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.investimentos.CompraVendaAcoes.dto.AcaoDto;
+import com.investimentos.CompraVendaAcoes.exception.GlobalExceptionHandler;
+import com.investimentos.CompraVendaAcoes.exception.acao.AcaoJaCadastradaException;
+import com.investimentos.CompraVendaAcoes.exception.acao.AcaoNaoEncontradaException;
 import com.investimentos.CompraVendaAcoes.model.AcaoModel;
 import com.investimentos.CompraVendaAcoes.service.AcaoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +49,7 @@ public class AcaoControllerTest {
     void setUp() throws JsonProcessingException {
         mockMvc = MockMvcBuilders
                 .standaloneSetup(acaoController)
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
 
         acaoModel = new AcaoModel();
@@ -109,6 +113,22 @@ public class AcaoControllerTest {
         verify(acaoService, times(1)).cadastrarAcao(acaoDto);
     }
 
+
+    @Test
+    @DisplayName("Deve lançar exceção quando a ação já estiver cadastrada")
+    void deveRetornar409QuandoAcaoJaEstiverCadastrada() throws Exception{
+        when(acaoService.cadastrarAcao(any(AcaoDto.class)))
+                .thenThrow(new AcaoJaCadastradaException("Ação já cadastrada no sistema"));
+
+        mockMvc.perform(post("/acoes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(acaoDto)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Ação já cadastrada no sistema"));
+
+        verify(acaoService, times(1)).cadastrarAcao(any(AcaoDto.class));
+    }
+
     @Test
     @DisplayName("Deve consultar ações e retornar código 200 ")
     void deveConsultarAcoesRetornarCodigo200() throws Exception {
@@ -120,6 +140,19 @@ public class AcaoControllerTest {
                 .andExpect(content().json(arrayAcoesResponse));
 
         verify(acaoService, times(1)).consultarAcoes();
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando não localizar a ação")
+    void deveLancarExcecaoQuandoNaoLocalizarAcao() throws Exception {
+        when(acaoService.consultarAcaoByTicker("BBDC3")).thenThrow(new AcaoNaoEncontradaException("A ação BBDC3 não foi localizada!"));
+
+        mockMvc.perform(get("/acoes/BBDC3")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("A ação BBDC3 não foi localizada!"));
+
+        verify(acaoService, times(1)).consultarAcaoByTicker("BBDC3");
     }
 
     @Test

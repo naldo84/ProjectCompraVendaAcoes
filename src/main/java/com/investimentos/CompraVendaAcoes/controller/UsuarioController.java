@@ -34,7 +34,6 @@ public class UsuarioController {
         List<UsuarioModel> listaDeUsers = usuarioService.consultarUsuarios();
 
         return ResponseEntity.ok().body(listaDeUsers);
-
     }
 
     @PutMapping("{cpf}")

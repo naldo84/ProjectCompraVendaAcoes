@@ -1,10 +1,14 @@
     package com.investimentos.CompraVendaAcoes.controller;
 
+    import com.fasterxml.jackson.databind.ObjectMapper;
     import com.investimentos.CompraVendaAcoes.dto.UsuarioDto;
+    import com.investimentos.CompraVendaAcoes.exception.Error;
     import com.investimentos.CompraVendaAcoes.exception.GlobalExceptionHandler;
     import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioJaCadastradoException;
+    import com.investimentos.CompraVendaAcoes.exception.usuario.UsuarioNaoEncontradoException;
     import com.investimentos.CompraVendaAcoes.model.UsuarioModel;
     import com.investimentos.CompraVendaAcoes.service.UsuarioService;
+    import com.investimentos.CompraVendaAcoes.service.util.UsuarioUtilService;
     import org.junit.jupiter.api.BeforeEach;
     import org.junit.jupiter.api.DisplayName;
     import org.junit.jupiter.api.Test;
@@ -12,6 +16,7 @@
     import org.mockito.InjectMocks;
     import org.mockito.Mock;
     import org.mockito.junit.jupiter.MockitoExtension;
+    import org.springframework.http.HttpStatus;
     import org.springframework.http.MediaType;
     import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,14 +38,17 @@
         @Mock
         private UsuarioService usuarioService;
 
+        @Mock
+        private UsuarioUtilService usuarioUtilService;
+
         private String userResponse;
-        private UsuarioDto usuarioDto;
         private UsuarioModel usuarioModel;
         private String jsonContent;
         private MockMvc mockMvc;
         private String arrayUsersResponse;
         private UsuarioModel usuarioModelAlterado;
         private UsuarioDto usuarioDtoAlterado;
+        private ObjectMapper objectMapper;
 
 
         @BeforeEach
@@ -100,17 +108,9 @@
             usuarioModelAlterado.setNome("Erinaldo Teste dos Santos - Alterado");
             usuarioModelAlterado.setIdade(40);
             usuarioModelAlterado.setEmail("erinaldo@teste.com");
-        }
 
-        String jsonContentAlterado = """
-                {
-                    "id": 3,
-                    "cpf": "82407211090",
-                    "nome": "Erinaldo Teste dos Santos - Alterado",
-                    "idade": 40,
-                    "email": "erinaldo@teste.com"
-                }
-                """;
+            objectMapper = new ObjectMapper();
+        }
 
 
         @Test
@@ -134,13 +134,13 @@
            when(usuarioService.cadastrarUsuario(any(UsuarioDto.class)))
                     .thenThrow(new UsuarioJaCadastradoException("Usuário já cadastrado!!"));
 
+           Error errorEsperado = new Error(HttpStatus.CONFLICT, "Usuário já cadastrado!!");
+
             mockMvc.perform(post("/users")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(jsonContent))
                     .andExpect(status().isConflict())
-                    .andExpect(content().json(""" 
-                            {"status": "CONFLICT", "message": "Usuário já cadastrado!!"}
-                            """));
+                    .andExpect(content().json(objectMapper.writeValueAsString(errorEsperado)));
 
             verify(usuarioService, times(1)).cadastrarUsuario(any(UsuarioDto.class));
         }
@@ -177,9 +177,9 @@
 
             mockMvc.perform(put("/users/82407211090")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(jsonContentAlterado))
+                    .content(objectMapper.writeValueAsString(usuarioDtoAlterado)))
                     .andExpect(status().isAccepted())
-                    .andExpect(content().json(jsonContentAlterado));
+                    .andExpect(content().json(objectMapper.writeValueAsString(usuarioDtoAlterado)));
 
             verify(usuarioService, times(1)).alterarUsuario("82407211090", usuarioDtoAlterado);
         }
@@ -193,6 +193,26 @@
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isAccepted())
                     .andExpect(content().string("Usuário 82407211090 excluído!"));
+
+            verify(usuarioService, times(1)).excluirUsuarioByCpf("82407211090");
+        }
+
+        @Test
+        @DisplayName(("Deve lançar exceção quando não localizar o usuário"))
+        void deveLancarExcecaoQuandoNaoLocalizarUsuario() throws Exception {
+            //configura o service para lançar exceçao
+            doThrow(new UsuarioNaoEncontradoException("Usuário não localizado!"))
+                    .when(usuarioService).excluirUsuarioByCpf("12345678900");
+
+            //Cria o objeto do erro esperado
+            Error errorEsperado = new Error(HttpStatus.NOT_FOUND, "Usuário não localizado!");
+
+            mockMvc.perform(delete("/users/12345678900")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().json(objectMapper.writeValueAsString(errorEsperado)));
+
+            verify(usuarioService, times(1)).excluirUsuarioByCpf("12345678900");
         }
 
         @Test
@@ -204,5 +224,7 @@
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isAccepted())
                     .andExpect(content().string("Os usuário foram excluídos!"));
+
+            verify(usuarioService, times(1)).excluirTodosOsUsuarios();
         }
     }
